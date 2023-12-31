@@ -3,7 +3,7 @@ from claimreview.vstoreInstance import vstoreInstance
 from claimreview.Embeddings import Embeddings
 from claimreview.memoryhandler import memoryhandler
 from claimreview.chatbot import Chatbot
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response, HTTPException
 from langchain.callbacks.streaming_aiter import AsyncIteratorCallbackHandler
 from fastapi.responses import StreamingResponse
 from langchain.chains import ConversationalRetrievalChain
@@ -53,9 +53,9 @@ claimbot = claimc.get_lcel()
 app = FastAPI()
 
 
-@app.get("/api")  # return api status
+@app.get("/api/status")  # return api status
 async def hello_word():
-    return "Yo! Hello world, The backend is running !!!"
+    return "fcgpt backend is running !!!"
 
 
 # async def send_message(query: str) -> AsyncIterable[str]:      #returns streamed output from chatbot
@@ -98,10 +98,17 @@ async def send_message(query: str) -> AsyncIterable[str]:
         yield s
 
 
-@app.post("/api/chatbot/")
-async def chatstream(question: Message):
-    answer = send_message(question.content)
-    return StreamingResponse(answer, media_type="text/event-stream")
+@app.post("/api/chatbot")
+async def chatstream(response:Response, request:Request,question: Message,override_limit: bool = False):
+    request_count = int(request.cookies.get("counter","0"))
+    if not override_limit and request_count >= 3:
+        raise HTTPException(status_code=429, detail="Request limit exceeded")
+    request_count += 1
+    streaming_response = StreamingResponse(send_message(question.content), media_type="text/event-stream")
+    
+    # Set the cookie directly on the streaming response
+    streaming_response.headers.append('Set-Cookie', f'counter={request_count}')
+    return streaming_response
 
 
 @app.post("/api/feedback")
