@@ -55,7 +55,7 @@ app = FastAPI()
 
 @app.get("/api/status")  # return api status
 async def hello_word():
-    return "fcgpt backend is running !!!"
+    return "API: fcgpt backend is running !!!"
 
 
 # async def send_message(query: str) -> AsyncIterable[str]:      #returns streamed output from chatbot
@@ -102,7 +102,7 @@ async def send_message(query: str) -> AsyncIterable[str]:
 async def chatstream(response:Response, request:Request,question: Message,override_limit: bool = False):
     request_count = int(request.cookies.get("counter","0"))
     if not override_limit and request_count >= 3:
-        raise HTTPException(status_code=429, detail="Request limit exceeded")
+        raise HTTPException(status_code=429, detail="API: Request limit exceeded")
     request_count += 1
     streaming_response = StreamingResponse(send_message(question.content), media_type="text/event-stream")
     
