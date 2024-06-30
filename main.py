@@ -60,7 +60,7 @@ app.add_middleware(
 
 @app.get("/api/status")
 async def hello_word():
-    return "fcgpt backend is running !!!"
+    return "API: fcgpt backend is running !!!"
 
 # async def send_message(query: str) -> AsyncIterable[str]:
 #     async for s in claimbot.astream({"question": query}):
@@ -105,6 +105,7 @@ async def speech_synthesis(text_data: TextToSynthesize):
     print("text : ", input_text)
     if not input_text:
         raise HTTPException(status_code=400, detail="API: No text provided for synthesis")
+
 
     try:
         response = openai_client.audio.speech.create(
