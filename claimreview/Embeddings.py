@@ -1,4 +1,4 @@
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 class Embeddings:
     def __init__(self, openai_api_key):

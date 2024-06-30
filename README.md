@@ -9,3 +9,4 @@ An LLM-powered chatbot that allows users to confirm claims and fake news floatin
  - run the ```test.py``` file for sample results
 
 ### Have a look at `example-queries.txt` to get started with some sample claims
+this app is supporting python3.10
